@@ -1,8 +1,95 @@
 version: '3.4'
 
+networks:
+  ecommerce:
+    name: ecom
+    driver: bridge
+
 services:
   authenticationservice:
     image: ${DOCKER_REGISTRY-}authenticationservice
     build:
       context: .
       dockerfile: AuthenticationService/Dockerfile
+
+  # POSTGRESQL
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    ports:
+      - "5432:5432"    
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER:-postgres}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-postgres}
+    networks:
+      - ecom
+
+  # ELASTIC
+  elasticsearch:
+    container_name: elasticsearch
+    image: elasticsearch:latest
+    environment:
+       - discovery.type=single-node
+       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+       - xpack.security.enabled=false
+       - bootstrap.memory_lock=true
+    volumes:
+      - elastic-data:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    networks:
+      - ecom
+
+  # KIBANA
+  kibana:
+    image: kibana:latest
+    container_name: kibana
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    ports:
+      - "5601:5601"
+    networks:
+      - ecom
+    depends_on:
+      - elasticsearch
+
+  # GRAFANA
+  grafana:
+    container_name: grafana
+    image: grafana/grafana
+    ports:
+      - "3000:3000"
+    networks:
+      - ecom
+
+  # PROMETHEUS
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    depends_on:
+      - otel-collector
+    networks:
+      - ecom
+ 
+  # OPENTELEMETRY COLLECTOR
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:latest
+    command: ["--config=/etc/otel-collector-config.yaml"]
+    volumes:
+      - ./otel-collector-config.yaml:/etc/otel-collector-config.yaml
+    ports:
+      - "4318:4318" #HTTP
+      - "4317:4317" #GRPC
+      - "8889:8889"
+      - "55679:55679" # zPages (debug )
+    depends_on:
+      - zipkin
+    networks:
+      - ecom
