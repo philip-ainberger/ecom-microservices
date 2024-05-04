@@ -1,0 +1,33 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+      http:
+processors:
+  batch:
+    timeout: 5s
+    send_batch_size: 500
+exporters:
+  prometheus:
+    endpoint: "0.0.0.0:8889"
+  
+  elasticsearch:
+    endpoints: ["http://elasticsearch:9200"]
+    index: "otel-logs"
+
+  zipkin:
+    endpoint: "http://zipkin:9411/api/v2/spans"
+    format: proto
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      exporters: [zipkin]
+    metrics:
+      receivers: [otlp]
+      exporters: [prometheus]
+    logs:
+      receivers: [otlp]
+      exporters: [elasticsearch]
+      processors: [batch]
