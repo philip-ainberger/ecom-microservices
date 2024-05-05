@@ -1,9 +1,6 @@
 version: '3.4'
 
-networks:
-  ecommerce:
-    name: ecom
-    driver: bridge
+name: ecom-local
 
 services:
   authenticationservice:
@@ -11,6 +8,12 @@ services:
     build:
       context: .
       dockerfile: AuthenticationService/Dockerfile
+    ports:
+      - "8080:8080"
+    networks:
+      - ecom
+    depends_on:
+      - otel-collector
 
   # POSTGRESQL
   postgres:
@@ -27,14 +30,14 @@ services:
   # ELASTIC
   elasticsearch:
     container_name: elasticsearch
-    image: elasticsearch:latest
+    image: elasticsearch:8.13.0
     environment:
        - discovery.type=single-node
        - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
        - xpack.security.enabled=false
        - bootstrap.memory_lock=true
     volumes:
-      - elastic-data:/usr/share/elasticsearch/data
+      - ./.data/elastic-volume:/usr/share/elasticsearch/data
     ports:
       - "9200:9200"
       - "9300:9300"
@@ -43,7 +46,7 @@ services:
 
   # KIBANA
   kibana:
-    image: kibana:latest
+    image: kibana:8.13.0
     container_name: kibana
     environment:
       - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
@@ -85,8 +88,8 @@ services:
     volumes:
       - ./otel-collector-config.yaml:/etc/otel-collector-config.yaml
     ports:
-      - "4318:4318" #HTTP
-      - "4317:4317" #GRPC
+      - "4318:4318" # HTTP
+      - "4317:4317" # GRPC
       - "8889:8889"
       - "55679:55679" # zPages (debug )
     depends_on:
@@ -114,3 +117,8 @@ services:
        - ./.data/rabbitmq:/var/lib/rabbitmq
     networks:
       - ecom
+
+networks:
+  ecom:
+    name: ecom
+    driver: bridge
