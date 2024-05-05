@@ -15,6 +15,19 @@ services:
     depends_on:
       - otel-collector
 
+  tokenservice:
+    image: ${DOCKER_REGISTRY-}tokenservice
+    container_name: tokenservice
+    build:
+      context: .
+      dockerfile: TokenService/Dockerfile
+    ports:
+      - "8090:8082"
+    networks:
+      - ecom
+    depends_on:
+      - otel-collector
+
   # POSTGRESQL
   postgres:
     image: postgres:latest
@@ -91,6 +104,7 @@ services:
       - "4318:4318" # HTTP
       - "4317:4317" # GRPC
       - "8889:8889"
+      - "13133:13133"
       - "55679:55679" # zPages (debug )
     depends_on:
       - zipkin
@@ -117,6 +131,7 @@ services:
        - ./.data/rabbitmq:/var/lib/rabbitmq
     networks:
       - ecom
+      
 
 networks:
   ecom:

@@ -3,10 +3,12 @@ receivers:
     protocols:
       grpc:
       http:
-processors:
-  batch:
-    timeout: 5s
-    send_batch_size: 500
+
+extensions:
+  health_check:
+  zpages:
+    endpoint: 0.0.0.0:55679
+
 exporters:
   prometheus:
     endpoint: "0.0.0.0:8889"
@@ -17,12 +19,19 @@ exporters:
 
   zipkin:
     endpoint: "http://zipkin:9411/api/v2/spans"
-    format: proto
+    format: json
+
+processors:
+  batch:
+    timeout: 5s
+    send_batch_size: 1
 
 service:
+  extensions: [health_check, zpages]
   pipelines:
     traces:
       receivers: [otlp]
+      processors: [batch]
       exporters: [zipkin]
     metrics:
       receivers: [otlp]
@@ -30,4 +39,3 @@ service:
     logs:
       receivers: [otlp]
       exporters: [elasticsearch]
-      processors: [batch]

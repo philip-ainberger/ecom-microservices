@@ -1,34 +1,93 @@
+using AuthenticationService.Database;
+using AuthenticationService.Endpoints;
+using AuthenticationService.Metrics;
+using AuthenticationService.Services;
+using OpenTelemetry.Exporter;
+using OpenTelemetry.Trace;
+using Service.Base.EntityFrameworkCore.Setup;
+using Service.Base.MassTransit.Setup;
+using Service.Base.Setup;
+using TokenService.Specification.ServiceConsumer;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+builder.Services
+    .AddOpenTelemetrySettings()
+    .AddEntityFrameworkSettings();
+
+builder.Services.AddTokenServiceForConsumer();
+
+builder.Services.AddLogging(conf =>
+{
+    conf.AddConsole();
+    conf.AddOpenTelemetry(otel => { otel.AddDefaultLogging(builder); });
+});
+
+builder.Services.AddOpenTelemetry()
+    .AddCurrentServiceAsResource(builder.GetApplicationName())
+    .AddTracing(conf =>
+    {
+        conf.AddAspNetCoreInstrumentation();
+        conf.AddHttpClientInstrumentation();
+        conf.AddSource("Test");
+
+        conf.AddConsoleExporter();
+
+        conf.AddOtlpExporter(otlpOptions =>
+        {
+            otlpOptions.Endpoint = new Uri("http://otel-collector:4317");
+            otlpOptions.Protocol = OtlpExportProtocol.Grpc;
+        });
+
+        //conf.AddDefaultTracing(builder);
+        //.AddMassTransitTracing();
+    });
+    //.AddMetrics(conf =>
+    //{
+    //    conf.AddDefaultMetrics(builder);
+    //});
+
+builder.Services.AddDbContextProvider<AuthDbContext>();
+builder.Services.AddScoped<IUserAuthenticationService, UserAuthenticationService>();
+builder.Services.AddSingleton<IAuthenticationMetrics, AuthenticationMetrics>();
+
+builder.Services
+    .AddAuthentication()
+    .AddCookie(options =>
+    {
+        options.Cookie.HttpOnly = true;
+        options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+        options.Cookie.SameSite = SameSiteMode.Lax;
+        options.ExpireTimeSpan = TimeSpan.FromHours(12);
+        options.LoginPath = string.Empty;
+        options.AccessDeniedPath = string.Empty;
+        options.Events.OnRedirectToLogin = context =>
+        {
+            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+            return Task.CompletedTask;
+        };
+    });
+
+builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+app.UseAuthentication();
+app.UseAuthorization();
 
-app.UseHttpsRedirection();
+//if (app.Environment.IsDevelopment())
+//{
+//    app.UseDeveloperExceptionPage();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+//    using (var scope = app.Services.CreateScope())
+//    {
+//        var db = scope.ServiceProvider.GetRequiredService<IDbContextProvider<AuthDbContext>>();
+//        db.ProvideContext().Database.Migrate();
+//    }
+//}
 
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast = Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-});
+//app.UseHttpsRedirection();
+
+app.MapAuthenticationEndpoints();
 
 app.Run();
-
-internal record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}

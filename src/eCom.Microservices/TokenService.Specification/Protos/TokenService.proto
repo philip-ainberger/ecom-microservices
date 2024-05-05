@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package TokenService;
+
+option csharp_namespace = "TokenService.Specification.Grpc.TokenService";
+
+service TokenGrpcService {
+	rpc CreateToken(CreateTokenRequest) returns (CreateTokenResponse) {}
+	rpc ValidateToken(ValidateTokenRequest) returns (ValidateTokenResponse) {}
+}
+
+message CreateTokenRequest {
+	string user_email = 1;
+}
+
+message CreateTokenResponse {
+	string access_token = 1;
+	int64 expires_in = 2;
+}
+
+message ValidateTokenRequest {
+	string access_token = 1;
+}
+
+message ValidateTokenResponse {
+	bool is_valid = 1;
+}

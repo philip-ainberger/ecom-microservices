@@ -1,6 +1,37 @@
-@AuthenticationService_HostAddress = http://localhost:5045
+@AuthenticationService_HostAddress = http://host.docker.internal:8080
 
-GET {{AuthenticationService_HostAddress}}/weatherforecast/
-Accept: application/json
+POST {{AuthenticationService_HostAddress}}/authentication/user/signup/
+Content-Type: application/json
+Accept-Language: en-US,en;q=0.5
+
+{
+    "email": "test1@test.com",
+    "password": "test12345678",
+    "firstName": "Max",
+    "lastName": "Muster"
+}
+
+###
+
+POST {{AuthenticationService_HostAddress}}/authentication/user/login/
+Content-Type: application/json
+Accept-Language: en-US,en;q=0.5
+
+{
+    "email": "test1@test.com",
+    "password": "test12345678"
+}
+
+###
+
+POST {{AuthenticationService_HostAddress}}/authentication/user/refresh
+Accept-Language: en-US,en;q=0.5
+Cookie: .AspNetCore.Cookies=CfDJ8HfNKwaH9dNIqKkWWkL2v2pG-uGTJuQbJGQ0vgwFtr5-QFuzs0-JXOgAn2w8mdMnVUu1PtxePXFqVD_GW1rywEF32I3Oy1cgh4e8ZfwgKAdB-6XI1BVV1dLt6PU031gLjedQ2gwKLf0nAB8yAZlRjvMngmQfUNQ8pSJDnT49fNhZmKnISzdkBkyZtKTeCkfXeSD7deV_9qjNQquBK0f_pNQymDowahhAWab9M7CQkuZM8h7o8cXDLUqMcCQE_FjP_VLzjIrJYVfZwnk_Q6ERhfgLpqPdbTq_c4QGEfdzANUJP9VHrWx9P1qq6z8k-CKlT73K4SZ6XEUg41Z-St5OvpI9hkC1-5afpakRP-SX-EavZFk4fMDusQXbBndx_PSd7W2GT0g_IYVuHscst0mhTsc; path=/; secure; samesite=lax; httponly
+
+###
+
+POST {{AuthenticationService_HostAddress}}/authentication/user/logout
+Accept-Language: en-US,en;q=0.5
+Cookie: .AspNetCore.Cookies=CfDJ8FpGOVFD-3NNvUmDvhgJIrmITRbgMQwWWaNhHjkUwX6JVPahNXvhvTyzPREdd2nm4tkLCB0_ArSrDAEvXQiCcHPtzXrAyEUXyw0Ou7NXcnkW66HP8Obfc1YRkGa2_ExAsBusuMrIe3WyNGgfAQ4EM7Vg3oQyPWNLcByX20zpBJ4U3XClkEv07iIQJmvC9RVbXYKcJlovOrvjofs9LZN1slsBNVfCkQd8MtNEwl68-kQqMkJ3dRPl5wWp991sp9aLtQpXJKyQaToOrLE-tQOP7B9cDMIsXHZiTtvZ9eXWR11KOeA8j83xDrx5NYqV7Reh71bBG73BlfZ3iIZuxEwSrbRNFoNgWZnW1yMJ5OLxmBZe0lCYstxmMM2RLS-EpqDlPnD2RXuZk3zQ8AaLppkluEY; path=/; secure; samesite=lax; httponly
 
 ###
