@@ -36,12 +36,14 @@ public static class OpenTelemetrySetupExtensions
     {
         var settings = hostApplication.GetSettings();
 
-        builder.AddAspNetCoreInstrumentation()
-            .AddHttpClientInstrumentation()
+        builder
             .AddSource(hostApplication.GetApplicationName())
+            //.SetSampler(new TraceIdRatioBasedSampler(1.0))
+            .AddAspNetCoreInstrumentation()
+            //.AddHttpClientInstrumentation()
             .AddOtlpExporter(conf =>
             {
-                conf.Endpoint = new Uri(settings.GlobalExportEndpoint);
+                conf.Endpoint = new Uri(settings.GlobalExportEndpoint + "/v1/traces");
                 conf.Protocol = TranslateOtelExportProtocol(settings.GlobalExportProtocol);
             })
             .AddConsoleExporter();
@@ -67,10 +69,12 @@ public static class OpenTelemetrySetupExtensions
             .AddMeter(hostApplication.GetApplicationName())
             .AddMeter("Microsoft.AspNetCore.Hosting")
             .AddMeter("Microsoft.AspNetCore.Server.Kestrel")
-            .AddOtlpExporter(conf =>
+            .AddOtlpExporter((conf, metricReaderOptions) =>
             {
                 conf.Endpoint = new Uri(settings.GlobalExportEndpoint);
                 conf.Protocol = TranslateOtelExportProtocol(settings.GlobalExportProtocol);
+
+                metricReaderOptions.PeriodicExportingMetricReaderOptions.ExportIntervalMilliseconds = 4000;
             });
 
         return builder;
@@ -87,7 +91,6 @@ public static class OpenTelemetrySetupExtensions
             conf.Endpoint = new Uri(settings.GlobalExportEndpoint);
             conf.Protocol = TranslateOtelExportProtocol(settings.GlobalExportProtocol);
         });
-        //.AddConsoleExporter();
 
         return builder;
     }

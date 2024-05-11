@@ -1,5 +1,7 @@
 ﻿using Grpc.Net.Client;
 using Microsoft.Extensions.Options;
+using System.Security.Authentication;
+using System.Security.Cryptography.X509Certificates;
 using TokenService.Specification.Grpc.TokenService;
 
 namespace TokenService.Specification.ServiceConsumer;
@@ -13,7 +15,13 @@ public class TokenClientService(IOptions<TokenServiceEndpointSettings> options) 
 {
     public async Task<CreateTokenResponse> CreateTokenAsync(string userEmail, CancellationToken token)
     {
-        using var channel = GrpcChannel.ForAddress(options.Value.TokenServiceEndpoint);
+        var handler = new HttpClientHandler();
+        handler.ClientCertificateOptions = ClientCertificateOption.Manual;
+        handler.SslProtocols = SslProtocols.Tls12;
+        handler.ClientCertificates.Add(new X509Certificate2(options.Value.ClientCertificatePath, options.Value.ClientCertificatePassword));
+        var channelOptions = new GrpcChannelOptions() { HttpHandler = handler };
+
+        using var channel = GrpcChannel.ForAddress(options.Value.TokenServiceEndpoint, channelOptions);
         var client = new TokenGrpcService.TokenGrpcServiceClient(channel);
 
         var reply = await client.CreateTokenAsync(new CreateTokenRequest()

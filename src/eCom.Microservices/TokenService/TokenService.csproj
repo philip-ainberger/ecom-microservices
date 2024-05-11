@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Service.Base\Service.Base.csproj" />
+    <ProjectReference Include="..\Service.Base.EntityFrameworkCore\Service.Base.EntityFrameworkCore.csproj" />
     <ProjectReference Include="..\TokenService.Specification\TokenService.Specification.csproj" />
   </ItemGroup>
 

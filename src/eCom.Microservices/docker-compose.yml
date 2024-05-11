@@ -14,19 +14,38 @@ services:
       - ecom
     depends_on:
       - otel-collector
+    environment:
+      - TokenServiceEndpoint__ClientCertificatePath=/etc/ssl/certs/client.pfx
+      - TokenServiceEndpoint__ClientCertificatePassword=12345
+      - ASPNETCORE_Kestrel__Certificates__Default__TrustStore=/etc/ssl/certs/ca.pem
+    volumes:
+      - ./.cert/client.pfx:/etc/ssl/certs/client.pfx
+      - ./.cert/ca.pem:/etc/ssl/certs/ca.pem
 
   tokenservice:
     image: ${DOCKER_REGISTRY-}tokenservice
     container_name: tokenservice
+    
     build:
       context: .
       dockerfile: TokenService/Dockerfile
     ports:
       - "8090:8082"
     networks:
-      - ecom
+      ecom:
+        aliases:
+          - tokenservice.ecom.dev
     depends_on:
       - otel-collector
+    environment:
+      - CustomCertificate__CertificatePath=/etc/ssl/certs/ca.pem
+      - CustomCertificate__CertificatePassword=12345
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/etc/ssl/certs/wildcard.crt
+      - ASPNETCORE_Kestrel__Certificates__Default__KeyPath=/etc/ssl/certs/wildcard.key
+    volumes:
+      - ./.cert/ca.pem:/etc/ssl/certs/ca.pem
+      - ./.cert/wildcard.crt:/etc/ssl/certs/wildcard.crt
+      - ./.cert/wildcard.key:/etc/ssl/certs/wildcard.key
 
   # POSTGRESQL
   postgres:

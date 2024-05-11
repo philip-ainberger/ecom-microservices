@@ -2,8 +2,8 @@ using AuthenticationService.Database;
 using AuthenticationService.Endpoints;
 using AuthenticationService.Metrics;
 using AuthenticationService.Services;
-using OpenTelemetry.Exporter;
-using OpenTelemetry.Trace;
+using Microsoft.EntityFrameworkCore;
+using Service.Base.EntityFrameworkCore;
 using Service.Base.EntityFrameworkCore.Setup;
 using Service.Base.MassTransit.Setup;
 using Service.Base.Setup;
@@ -23,29 +23,18 @@ builder.Services.AddLogging(conf =>
     conf.AddOpenTelemetry(otel => { otel.AddDefaultLogging(builder); });
 });
 
+
 builder.Services.AddOpenTelemetry()
     .AddCurrentServiceAsResource(builder.GetApplicationName())
     .AddTracing(conf =>
     {
-        conf.AddAspNetCoreInstrumentation();
-        conf.AddHttpClientInstrumentation();
-        conf.AddSource("Test");
-
-        conf.AddConsoleExporter();
-
-        conf.AddOtlpExporter(otlpOptions =>
-        {
-            otlpOptions.Endpoint = new Uri("http://otel-collector:4317");
-            otlpOptions.Protocol = OtlpExportProtocol.Grpc;
-        });
-
-        //conf.AddDefaultTracing(builder);
-        //.AddMassTransitTracing();
+        conf.AddDefaultTracing(builder);
+            //.AddMassTransitTracing();
+    })
+    .AddMetrics(conf =>
+    {
+        conf.AddDefaultMetrics(builder);
     });
-    //.AddMetrics(conf =>
-    //{
-    //    conf.AddDefaultMetrics(builder);
-    //});
 
 builder.Services.AddDbContextProvider<AuthDbContext>();
 builder.Services.AddScoped<IUserAuthenticationService, UserAuthenticationService>();
@@ -75,16 +64,16 @@ var app = builder.Build();
 app.UseAuthentication();
 app.UseAuthorization();
 
-//if (app.Environment.IsDevelopment())
-//{
-//    app.UseDeveloperExceptionPage();
+if (app.Environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage();
 
-//    using (var scope = app.Services.CreateScope())
-//    {
-//        var db = scope.ServiceProvider.GetRequiredService<IDbContextProvider<AuthDbContext>>();
-//        db.ProvideContext().Database.Migrate();
-//    }
-//}
+    //using (var scope = app.Services.CreateScope())
+    //{
+    //    var db = scope.ServiceProvider.GetRequiredService<IDbContextProvider<AuthDbContext>>();
+    //    db.ProvideContext().Database.Migrate();
+    //}
+}
 
 //app.UseHttpsRedirection();
 
