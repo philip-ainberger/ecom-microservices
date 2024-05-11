@@ -152,7 +152,21 @@ services:
       - ecom
       
 
+  gatewayservice:
+    image: ${DOCKER_REGISTRY-}gatewayservice
+    build:
+      context: .
+      dockerfile: GatewayService/Dockerfile
+
+  inventoryservice:
+    image: ${DOCKER_REGISTRY-}inventoryservice
+    build:
+      context: .
+      dockerfile: InventoryService/Dockerfile
+
 networks:
   ecom:
     name: ecom
     driver: bridge
+
+
