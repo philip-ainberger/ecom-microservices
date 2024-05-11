@@ -15,12 +15,16 @@ services:
     depends_on:
       - otel-collector
     environment:
-      - TokenServiceEndpoint__ClientCertificatePath=/etc/ssl/certs/client.pfx
+      - TokenServiceEndpoint__ClientCertificatePath=/etc/ssl/certs/client.crt
       - TokenServiceEndpoint__ClientCertificatePassword=12345
-      - ASPNETCORE_Kestrel__Certificates__Default__TrustStore=/etc/ssl/certs/ca.pem
+      - ASPNETCORE_Kestrel__Certificates__Default__TrustStore=/etc/ssl/certs/ca.crt
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/etc/ssl/certs/wildcard.crt
+      - ASPNETCORE_Kestrel__Certificates__Default__KeyPath=/etc/ssl/certs/wildcard.key
     volumes:
-      - ./.cert/client.pfx:/etc/ssl/certs/client.pfx
-      - ./.cert/ca.pem:/etc/ssl/certs/ca.pem
+      - ./.cert/client.crt:/etc/ssl/certs/client.crt
+      - ./.cert/ca.crt:/etc/ssl/certs/ca.crt
+      - ./.cert/wildcard.crt:/etc/ssl/certs/wildcard.crt
+      - ./.cert/wildcard.key:/etc/ssl/certs/wildcard.key
 
   tokenservice:
     image: ${DOCKER_REGISTRY-}tokenservice
@@ -38,12 +42,12 @@ services:
     depends_on:
       - otel-collector
     environment:
-      - CustomCertificate__CertificatePath=/etc/ssl/certs/ca.pem
+      - CustomCertificate__CertificatePath=/etc/ssl/certs/ca.crt
       - CustomCertificate__CertificatePassword=12345
       - ASPNETCORE_Kestrel__Certificates__Default__Path=/etc/ssl/certs/wildcard.crt
       - ASPNETCORE_Kestrel__Certificates__Default__KeyPath=/etc/ssl/certs/wildcard.key
     volumes:
-      - ./.cert/ca.pem:/etc/ssl/certs/ca.pem
+      - ./.cert/ca.crt:/etc/ssl/certs/ca.crt
       - ./.cert/wildcard.crt:/etc/ssl/certs/wildcard.crt
       - ./.cert/wildcard.key:/etc/ssl/certs/wildcard.key
 
@@ -68,8 +72,8 @@ services:
        - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
        - xpack.security.enabled=false
        - bootstrap.memory_lock=true
-    volumes:
-      - ./.data/elastic-volume:/usr/share/elasticsearch/data
+    #volumes:
+    #  - ./.data/elastic-volume:/usr/share/elasticsearch/data
     ports:
       - "9200:9200"
       - "9300:9300"
@@ -146,8 +150,8 @@ services:
     ports:
       - 5672:5672
       - 15672:15672
-    volumes:
-       - ./.data/rabbitmq:/var/lib/rabbitmq
+    #volumes:
+    #   - ./.data/rabbitmq:/var/lib/rabbitmq
     networks:
       - ecom
       

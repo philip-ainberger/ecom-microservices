@@ -1,4 +1,4 @@
-@AuthenticationService_HostAddress = http://host.docker.internal:8080
+@AuthenticationService_HostAddress = http://localhost:8080
 
 POST {{AuthenticationService_HostAddress}}/authentication/user/signup/
 Content-Type: application/json
@@ -26,7 +26,7 @@ Accept-Language: en-US,en;q=0.5
 
 POST {{AuthenticationService_HostAddress}}/authentication/user/refresh
 Accept-Language: en-US,en;q=0.5
-Cookie: .AspNetCore.Cookies=CfDJ8HfNKwaH9dNIqKkWWkL2v2pG-uGTJuQbJGQ0vgwFtr5-QFuzs0-JXOgAn2w8mdMnVUu1PtxePXFqVD_GW1rywEF32I3Oy1cgh4e8ZfwgKAdB-6XI1BVV1dLt6PU031gLjedQ2gwKLf0nAB8yAZlRjvMngmQfUNQ8pSJDnT49fNhZmKnISzdkBkyZtKTeCkfXeSD7deV_9qjNQquBK0f_pNQymDowahhAWab9M7CQkuZM8h7o8cXDLUqMcCQE_FjP_VLzjIrJYVfZwnk_Q6ERhfgLpqPdbTq_c4QGEfdzANUJP9VHrWx9P1qq6z8k-CKlT73K4SZ6XEUg41Z-St5OvpI9hkC1-5afpakRP-SX-EavZFk4fMDusQXbBndx_PSd7W2GT0g_IYVuHscst0mhTsc; path=/; secure; samesite=lax; httponly
+Cookie: .AspNetCore.Cookies=CfDJ8KRts9A7AbpPl1BXqbrlJDMaK2GikGVzTCuRk2kZNZbdiqzHGB_IGC05ULbBI4tVIqUsliUF6eNg3_qF7GfTz7uUjWSd4g1fff7TizmN1VTNUO7GfyhL4AU0knzu3EqbGzp8F7kb9PkqvDGQAbAzx5Ub-1RIt9-A1RYbBC_X-LLnB0TRFPd-zIi9ag6EWH7fe3UsPjJXs6_JZmVbihQTEkzuBnyZ0VanbUZAVGwSOhSi7W89ErxGaTNVdPG_E6T7jn1VI1wbF7L7rR1btShCFShalGWptrNeKkcPs5sOenW1KhP5Fn_L5T0VpmrYzi8PLtrV8vTlblcDSaqKx7NHtEPVaF3nMNkBZy38B4CQq49Ty9mZjFzc9_aQ1L-MpdPuxh-AP7EIaIN6EtR50vKVZSg; path=/; secure; samesite=lax; httponly
 
 ###
 
