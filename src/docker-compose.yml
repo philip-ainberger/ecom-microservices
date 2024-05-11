@@ -41,7 +41,7 @@ services:
           - tokenservice.ecom.dev
     depends_on:
       - otel-collector
-    environment:
+    environment:      
       - CustomCertificate__CertificatePath=/etc/ssl/certs/ca.crt
       - CustomCertificate__CertificatePassword=12345
       - ASPNETCORE_Kestrel__Certificates__Default__Path=/etc/ssl/certs/wildcard.crt
@@ -51,13 +51,38 @@ services:
       - ./.cert/wildcard.crt:/etc/ssl/certs/wildcard.crt
       - ./.cert/wildcard.key:/etc/ssl/certs/wildcard.key
   
+  gatewayservice:
+    image: ${DOCKER_REGISTRY-}gatewayservice
+    build:
+      context: .
+      dockerfile: GatewayService/Dockerfile
+    ports:
+      - "443:8082"
+    networks:
+      ecom:
+        aliases:
+          - gateway.ecom.dev
+    environment:
+      - TokenServiceEndpoint__ClientCertificatePath=/etc/ssl/certs/client.crt
+      - TokenServiceEndpoint__ClientCertificatePassword=12345  
+      - ASPNETCORE_Kestrel__Certificates__Default__TrustStore=/etc/ssl/certs/ca.crt
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/etc/ssl/certs/wildcard.crt
+      - ASPNETCORE_Kestrel__Certificates__Default__KeyPath=/etc/ssl/certs/wildcard.key
+    volumes:
+      - ./.cert/client.crt:/etc/ssl/certs/client.crt
+      - ./.cert/ca.crt:/etc/ssl/certs/ca.crt
+      - ./.cert/wildcard.crt:/etc/ssl/certs/wildcard.crt
+      - ./.cert/wildcard.key:/etc/ssl/certs/wildcard.key
+
   inventoryservice:
     image: ${DOCKER_REGISTRY-}inventoryservice
     build:
       context: .
       dockerfile: InventoryService/Dockerfile
     networks:
-      - ecom
+      ecom:
+        aliases:
+          - inventoryservice.ecom.dev
     environment:
       - ASPNETCORE_Kestrel__Certificates__Default__TrustStore=/etc/ssl/certs/ca.crt
       - ASPNETCORE_Kestrel__Certificates__Default__Path=/etc/ssl/certs/wildcard.crt
@@ -170,13 +195,6 @@ services:
     #   - ./.data/rabbitmq:/var/lib/rabbitmq
     networks:
       - ecom
-      
-
-  gatewayservice:
-    image: ${DOCKER_REGISTRY-}gatewayservice
-    build:
-      context: .
-      dockerfile: GatewayService/Dockerfile
 
 
 networks:

@@ -1,6 +1,11 @@
-@GatewayService_HostAddress = http://localhost:5215
+@GatewayService_HostAddress = https://gateway.ecom.dev/api/
 
-GET {{GatewayService_HostAddress}}/weatherforecast/
+POST {{GatewayService_HostAddress}}/inventory/categories
 Accept: application/json
+Content-Type: application/json
+
+{
+    "Id": "0000"
+}
 
 ###
