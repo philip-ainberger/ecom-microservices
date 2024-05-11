@@ -50,6 +50,22 @@ services:
       - ./.cert/ca.crt:/etc/ssl/certs/ca.crt
       - ./.cert/wildcard.crt:/etc/ssl/certs/wildcard.crt
       - ./.cert/wildcard.key:/etc/ssl/certs/wildcard.key
+  
+  inventoryservice:
+    image: ${DOCKER_REGISTRY-}inventoryservice
+    build:
+      context: .
+      dockerfile: InventoryService/Dockerfile
+    networks:
+      - ecom
+    environment:
+      - ASPNETCORE_Kestrel__Certificates__Default__TrustStore=/etc/ssl/certs/ca.crt
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/etc/ssl/certs/wildcard.crt
+      - ASPNETCORE_Kestrel__Certificates__Default__KeyPath=/etc/ssl/certs/wildcard.key
+    volumes:
+      - ./.cert/ca.crt:/etc/ssl/certs/ca.crt
+      - ./.cert/wildcard.crt:/etc/ssl/certs/wildcard.crt
+      - ./.cert/wildcard.key:/etc/ssl/certs/wildcard.key
 
   # POSTGRESQL
   postgres:
@@ -162,11 +178,6 @@ services:
       context: .
       dockerfile: GatewayService/Dockerfile
 
-  inventoryservice:
-    image: ${DOCKER_REGISTRY-}inventoryservice
-    build:
-      context: .
-      dockerfile: InventoryService/Dockerfile
 
 networks:
   ecom:

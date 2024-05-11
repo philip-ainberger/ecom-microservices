@@ -1,7 +1,7 @@
 ﻿namespace AuthenticationService.Database.Entities;
 
 public record UserEntity(
-    int Id,
+    Guid Id,
     string Email,
     string HashedPassword,
     string FirstName,

@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AuthenticationService.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20240504140351_Initial")]
-    partial class Initial
+    [Migration("20240511101217_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -27,25 +27,27 @@ namespace AuthenticationService.Migrations
 
             modelBuilder.Entity("AuthenticationService.Database.Entities.UserEntity", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Email")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("FirstName")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("HashedPassword")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("LastName")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<DateTime>("PasswordChangedAt")

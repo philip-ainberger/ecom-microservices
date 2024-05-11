@@ -33,6 +33,8 @@ public class AuthDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<UserEntity>(c => c.HasKey(e => e.Id));
+
         base.OnModelCreating(modelBuilder);
     }
 }
