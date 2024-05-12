@@ -11,7 +11,7 @@ public class ProductsQueryHandler(IDbContextProvider<InventoryDbContext> dbConte
         {
             return dbContext.Products
                 .AsQueryable()
-                .Select(DtoMapExtensions.ToProductDto)
+                .Select(c => c.ToProductDto())
                 .ToList();
         }
     }

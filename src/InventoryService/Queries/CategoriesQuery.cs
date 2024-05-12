@@ -11,7 +11,7 @@ public class CategoriesQueryHandler(IDbContextProvider<InventoryDbContext> dbCon
         {
             return dbContext.Categories
                 .AsQueryable()
-                .Select(DtoMapExtensions.ToCategoryDto)
+                .Select(c => c.ToCategoryDto())
                 .ToList();
         }
     }

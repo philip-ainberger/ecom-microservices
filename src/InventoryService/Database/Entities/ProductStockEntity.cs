@@ -1,20 +1,20 @@
 ﻿namespace InventoryService;
 
-public record class ProductStockEntity : BaseEntity
+public class ProductStockEntity : BaseEntity
 {
     // maybe add warehouse support later
 
     [Required]
-    public int Quantity { get; init; }
+    public int Quantity { get; set; }
 
     [Required]
-    public int Reserved { get; init; }
+    public int Reserved { get; set; }
 
     [Required]
-    public int ReorderLevel { get; init; }
+    public int ReorderLevel { get; set; }
 
     [Required]
-    public Guid ProductId { get; init; }
+    public Guid ProductId { get; set; }
 
-    public ProductEntity Product { get; init; } = null!;
+    public ProductEntity Product { get; set; } = null!;
 }

@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace InventoryService.Migrations
 {
     [DbContext(typeof(InventoryDbContext))]
-    [Migration("20240512123602_Init")]
+    [Migration("20240512182606_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -79,9 +79,6 @@ namespace InventoryService.Migrations
 
                     b.Property<decimal>("Price")
                         .HasColumnType("numeric");
-
-                    b.Property<Guid>("ProductStockId")
-                        .HasColumnType("uuid");
 
                     b.Property<Guid>("TenantId")
                         .HasColumnType("uuid");
@@ -156,7 +153,7 @@ namespace InventoryService.Migrations
                     b.HasOne("InventoryService.ProductEntity", "Product")
                         .WithOne("ProductStock")
                         .HasForeignKey("InventoryService.ProductStockEntity", "ProductId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Product");

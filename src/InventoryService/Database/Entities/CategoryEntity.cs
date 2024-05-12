@@ -1,14 +1,14 @@
 ﻿namespace InventoryService;
 
-public record CategoryEntity : BaseEntity
+public class CategoryEntity : BaseEntity
 {
     [Required]
-    public required string Name { get; init; }
+    public required string Name { get; set; }
 
-    public Guid? ParentCategoryId { get; init; }
+    public Guid? ParentCategoryId { get; set; }
 
     [ForeignKey("ParentCategoryId")]
-    public CategoryEntity? ParentCategory { get; init; }
+    public CategoryEntity? ParentCategory { get; set; }
 
-    public List<ProductEntity> Products { get; init; } = new List<ProductEntity>();
+    public List<ProductEntity> Products { get; set; } = new List<ProductEntity>();
 }

@@ -1,18 +1,16 @@
 ﻿namespace InventoryService;
 
-public record ProductEntity : BaseEntity
+public class ProductEntity : BaseEntity
 {
     [Required]
-    public required string Name { get; init; }
+    public required string Name { get; set; }
 
     [Required, Range(0, double.MaxValue, ErrorMessage = "Price must be a positive value.")]
-    public decimal Price { get; init; }
+    public decimal Price { get; set; }
 
-    public Guid ProductStockId { get; init; }
+    public ProductStockEntity ProductStock { get; set; } = null!;
 
-    public ProductStockEntity ProductStock { get; init; } = null!;
+    public Guid? CategoryId { get; set; }
 
-    public Guid? CategoryId { get; init; }
-
-    public CategoryEntity? Category { get; init; }
+    public CategoryEntity? Category { get; set; }
 }

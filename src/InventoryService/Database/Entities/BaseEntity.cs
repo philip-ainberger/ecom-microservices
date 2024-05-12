@@ -1,22 +1,22 @@
 ﻿namespace InventoryService;
 
-public record BaseEntity
+public class BaseEntity
 {
     [Key]
-    public Guid Id { get; init; }
+    public Guid Id { get; set; }
 
     [Required]
-    public Guid TenantId { get; init; }
+    public Guid TenantId { get; set; }
 
     [Required]
-    public DateTime UpdatedAt { get; init; }
+    public DateTime UpdatedAt { get; set; }
 
     [Required]
-    public DateTime CreatedAt { get; init; }
+    public DateTime CreatedAt { get; set; }
 
     [Required]
-    public Guid CreatedByUserId { get; init; }
+    public Guid CreatedByUserId { get; set; }
 
     [Required]
-    public Guid UpdatedByUserId { get; init; }
+    public Guid UpdatedByUserId { get; set; }
 }

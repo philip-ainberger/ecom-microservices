@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Conventions;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Npgsql;
 using Service.Base.EntityFrameworkCore.Settings;
@@ -56,16 +55,10 @@ public class InventoryDbContext : DbContext
             .HasForeignKey(c => c.CategoryId);
 
         modelBuilder.Entity<ProductEntity>()
-            .HasOne(p => p.ProductStock)
-            .WithOne(s => s.Product)
-            .HasForeignKey<ProductEntity>(p => p.ProductStockId)
-            .OnDelete(DeleteBehavior.Cascade);
-
-        modelBuilder.Entity<ProductStockEntity>()
-            .HasOne(s => s.Product)
-            .WithOne(p => p.ProductStock)
+            .HasOne(s => s.ProductStock)
+            .WithOne(p => p.Product)
             .HasForeignKey<ProductStockEntity>(s => s.ProductId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.Cascade);
 
         base.OnModelCreating(modelBuilder);
     }

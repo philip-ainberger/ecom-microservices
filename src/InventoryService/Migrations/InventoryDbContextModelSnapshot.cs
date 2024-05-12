@@ -77,9 +77,6 @@ namespace InventoryService.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("numeric");
 
-                    b.Property<Guid>("ProductStockId")
-                        .HasColumnType("uuid");
-
                     b.Property<Guid>("TenantId")
                         .HasColumnType("uuid");
 
@@ -153,7 +150,7 @@ namespace InventoryService.Migrations
                     b.HasOne("InventoryService.ProductEntity", "Product")
                         .WithOne("ProductStock")
                         .HasForeignKey("InventoryService.ProductStockEntity", "ProductId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Product");
