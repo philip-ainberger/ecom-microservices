@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace InventoryService.Migrations
 {
     [DbContext(typeof(InventoryDbContext))]
-    [Migration("20240511100926_Init")]
+    [Migration("20240512082253_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -55,7 +55,8 @@ namespace InventoryService.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ParentCategoryId");
+                    b.HasIndex("ParentCategoryId")
+                        .IsUnique();
 
                     b.ToTable("Categories");
                 });
@@ -140,11 +141,9 @@ namespace InventoryService.Migrations
 
             modelBuilder.Entity("InventoryService.CategoryEntity", b =>
                 {
-                    b.HasOne("InventoryService.CategoryEntity", "ParentCategory")
-                        .WithMany()
-                        .HasForeignKey("ParentCategoryId");
-
-                    b.Navigation("ParentCategory");
+                    b.HasOne("InventoryService.CategoryEntity", null)
+                        .WithOne("ParentCategory")
+                        .HasForeignKey("InventoryService.CategoryEntity", "ParentCategoryId");
                 });
 
             modelBuilder.Entity("InventoryService.ProductEntity", b =>
@@ -165,6 +164,11 @@ namespace InventoryService.Migrations
                         .IsRequired();
 
                     b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("InventoryService.CategoryEntity", b =>
+                {
+                    b.Navigation("ParentCategory");
                 });
 #pragma warning restore 612, 618
         }

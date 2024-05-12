@@ -19,7 +19,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Service.Base.Api\Service.Base.Api.csproj" />
     <ProjectReference Include="..\Service.Base.EntityFrameworkCore\Service.Base.EntityFrameworkCore.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Migrations\" />
   </ItemGroup>
 
 </Project>

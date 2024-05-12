@@ -36,6 +36,11 @@ public class InventoryDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<CategoryEntity>()
+            .HasOne<CategoryEntity>()
+            .WithOne(c => c.ParentCategory)
+            .HasForeignKey<CategoryEntity>(c => c.ParentCategoryId);
+
         base.OnModelCreating(modelBuilder);
     }
 }

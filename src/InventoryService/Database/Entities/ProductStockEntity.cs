@@ -1,7 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace InventoryService;
+﻿namespace InventoryService;
 
 public record class ProductStockEntity : BaseEntity
 {
@@ -9,10 +6,10 @@ public record class ProductStockEntity : BaseEntity
 
     [Required]
     public int Quantity { get; init; }
-    
+
     [Required]
     public int Reserved { get; init; }
-    
+
     [Required]
     public int ReorderLevel { get; init; }
 

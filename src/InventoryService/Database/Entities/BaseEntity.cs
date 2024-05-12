@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace InventoryService;
+﻿namespace InventoryService;
 
 public record BaseEntity
 {
@@ -12,13 +10,13 @@ public record BaseEntity
 
     [Required]
     public DateTime UpdatedAt { get; init; }
-    
+
     [Required]
     public DateTime CreatedAt { get; init; }
-    
+
     [Required]
     public Guid CreatedByUserId { get; init; }
-    
+
     [Required]
     public Guid UpdatedByUserId { get; init; }
 }
