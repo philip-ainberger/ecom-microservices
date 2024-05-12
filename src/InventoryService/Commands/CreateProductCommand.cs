@@ -1,6 +1,6 @@
 ﻿namespace InventoryService.Commands;
 
-public record CreateProductCommand(string Name, decimal Price, Guid? CategoryId);
+public record CreateProductCommand(string Name, decimal Price, Guid? CategoryId, int InitialStock);
 
 public class CreateProductCommandValidator : AbstractValidator<CreateProductCommand>
 {
@@ -8,6 +8,7 @@ public class CreateProductCommandValidator : AbstractValidator<CreateProductComm
     {
         RuleFor(c => c.Name).NotEmpty().MinimumLength(2);
         RuleFor(c => c.Price).GreaterThan(0);
+        RuleFor(c => c.InitialStock).GreaterThanOrEqualTo(0);
     }
 }
 
@@ -25,7 +26,18 @@ public static partial class DtoMapExtensions
             CreatedByUserId = currentUserId,
             UpdatedByUserId = currentUserId,
             CategoryId = command.CategoryId,
-            Price = command.Price
+            Price = command.Price,
+            ProductStock = new ProductStockEntity()
+            {
+                Quantity = command.InitialStock,
+                ReorderLevel = -1,
+                Reserved = 0,
+                UpdatedAt = DateTime.UtcNow,
+                CreatedAt = DateTime.UtcNow,
+                CreatedByUserId = currentUserId,
+                UpdatedByUserId = currentUserId,
+                TenantId = tenantId
+            }
         };
     }
 }

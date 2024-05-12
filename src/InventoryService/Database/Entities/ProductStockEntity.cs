@@ -16,6 +16,5 @@ public record class ProductStockEntity : BaseEntity
     [Required]
     public Guid ProductId { get; init; }
 
-    [ForeignKey("ProductId")]
-    public required ProductEntity Product { get; init; }
+    public ProductEntity Product { get; init; } = null!;
 }

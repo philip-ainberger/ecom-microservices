@@ -40,7 +40,7 @@ public class TokenClientService(IOptions<TokenServiceEndpointSettings> options) 
     {
         var handler = new HttpClientHandler();
         handler.ClientCertificateOptions = ClientCertificateOption.Manual;
-        handler.SslProtocols = SslProtocols.Tls12;
+        handler.SslProtocols = SslProtocols.Tls13;
         handler.ClientCertificates.Add(new X509Certificate2(options.Value.ClientCertificatePath, options.Value.ClientCertificatePassword));
         
         var channelOptions = new GrpcChannelOptions() { HttpHandler = handler };

@@ -9,4 +9,6 @@ public record CategoryEntity : BaseEntity
 
     [ForeignKey("ParentCategoryId")]
     public CategoryEntity? ParentCategory { get; init; }
+
+    public List<ProductEntity> Products { get; init; } = new List<ProductEntity>();
 }

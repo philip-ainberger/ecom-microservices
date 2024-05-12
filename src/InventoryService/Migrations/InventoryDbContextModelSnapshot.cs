@@ -52,9 +52,6 @@ namespace InventoryService.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ParentCategoryId")
-                        .IsUnique();
-
                     b.ToTable("Categories");
                 });
 
@@ -80,6 +77,9 @@ namespace InventoryService.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("numeric");
 
+                    b.Property<Guid>("ProductStockId")
+                        .HasColumnType("uuid");
+
                     b.Property<Guid>("TenantId")
                         .HasColumnType("uuid");
 
@@ -90,8 +90,6 @@ namespace InventoryService.Migrations
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CategoryId");
 
                     b.ToTable("Products");
                 });
@@ -131,9 +129,7 @@ namespace InventoryService.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ProductId");
-
-                    b.ToTable("ProductsStocks");
+                    b.ToTable("ProductsStock");
                 });
 
             modelBuilder.Entity("InventoryService.CategoryEntity", b =>
@@ -146,7 +142,7 @@ namespace InventoryService.Migrations
             modelBuilder.Entity("InventoryService.ProductEntity", b =>
                 {
                     b.HasOne("InventoryService.CategoryEntity", "Category")
-                        .WithMany()
+                        .WithMany("Products")
                         .HasForeignKey("CategoryId");
 
                     b.Navigation("Category");
@@ -155,9 +151,9 @@ namespace InventoryService.Migrations
             modelBuilder.Entity("InventoryService.ProductStockEntity", b =>
                 {
                     b.HasOne("InventoryService.ProductEntity", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .WithOne("ProductStock")
+                        .HasForeignKey("InventoryService.ProductStockEntity", "ProductId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Product");
@@ -166,6 +162,14 @@ namespace InventoryService.Migrations
             modelBuilder.Entity("InventoryService.CategoryEntity", b =>
                 {
                     b.Navigation("ParentCategory");
+
+                    b.Navigation("Products");
+                });
+
+            modelBuilder.Entity("InventoryService.ProductEntity", b =>
+                {
+                    b.Navigation("ProductStock")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

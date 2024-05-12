@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -40,6 +41,7 @@ namespace InventoryService.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
                     Price = table.Column<decimal>(type: "numeric", nullable: false),
+                    ProductStockId = table.Column<Guid>(type: "uuid", nullable: false),
                     CategoryId = table.Column<Guid>(type: "uuid", nullable: true),
                     TenantId = table.Column<Guid>(type: "uuid", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
@@ -58,7 +60,7 @@ namespace InventoryService.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ProductsStocks",
+                name: "ProductsStock",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -74,37 +76,21 @@ namespace InventoryService.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ProductsStocks", x => x.Id);
+                    table.PrimaryKey("PK_ProductsStock", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ProductsStocks_Products_ProductId",
+                        name: "FK_ProductsStock_Products_ProductId",
                         column: x => x.ProductId,
                         principalTable: "Products",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Categories_ParentCategoryId",
-                table: "Categories",
-                column: "ParentCategoryId",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Products_CategoryId",
-                table: "Products",
-                column: "CategoryId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ProductsStocks_ProductId",
-                table: "ProductsStocks",
-                column: "ProductId");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "ProductsStocks");
+                name: "ProductsStock");
 
             migrationBuilder.DropTable(
                 name: "Products");

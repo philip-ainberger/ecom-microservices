@@ -1,4 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Conventions;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Npgsql;
 using Service.Base.EntityFrameworkCore.Settings;
@@ -16,7 +18,7 @@ public class InventoryDbContext : DbContext
 
     public DbSet<ProductEntity> Products { get; set; }
     public DbSet<CategoryEntity> Categories { get; set; }
-    public DbSet<ProductStockEntity> ProductsStocks { get; set; }
+    public DbSet<ProductStockEntity> ProductsStock { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -34,12 +36,36 @@ public class InventoryDbContext : DbContext
         optionsBuilder.UseNpgsql(con);
     }
 
+    protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
+    {
+        configurationBuilder.Conventions.Remove(typeof(ForeignKeyIndexConvention));
+
+        base.ConfigureConventions(configurationBuilder);
+    }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<CategoryEntity>()
             .HasOne<CategoryEntity>()
             .WithOne(c => c.ParentCategory)
             .HasForeignKey<CategoryEntity>(c => c.ParentCategoryId);
+
+        modelBuilder.Entity<CategoryEntity>()
+            .HasMany(c => c.Products)
+            .WithOne(c => c.Category)
+            .HasForeignKey(c => c.CategoryId);
+
+        modelBuilder.Entity<ProductEntity>()
+            .HasOne(p => p.ProductStock)
+            .WithOne(s => s.Product)
+            .HasForeignKey<ProductEntity>(p => p.ProductStockId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<ProductStockEntity>()
+            .HasOne(s => s.Product)
+            .WithOne(p => p.ProductStock)
+            .HasForeignKey<ProductStockEntity>(s => s.ProductId)
+            .OnDelete(DeleteBehavior.Restrict);
 
         base.OnModelCreating(modelBuilder);
     }

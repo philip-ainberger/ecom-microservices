@@ -1,11 +1,17 @@
-@GatewayService_HostAddress = https://gateway.ecom.dev/api/
+@GatewayService_HostAddress = https://gateway.ecom.dev
 
-POST {{GatewayService_HostAddress}}/inventory/categories
+POST {{GatewayService_HostAddress}}/api/inventory/categories
 Accept: application/json
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0ZXN0MUB0ZXN0LmNvbSIsIm5iZiI6MTcxNTQ5Nzc4NiwiZXhwIjoxNzE1NDk4Mzg2LCJpYXQiOjE3MTU0OTc3ODYsImlzcyI6ImxvY2FsIiwiYXVkIjoibG9jYWwifQ.ali3bmWjHKMKcq0AreGvoQGb7ZHioOVS1ymwvfqOZJI
 
 {
     "Id": "0000"
 }
+
+###
+
+GET {{GatewayService_HostAddress}}/test
+Accept: application/json
 
 ###
